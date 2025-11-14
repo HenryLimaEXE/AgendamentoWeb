@@ -9,22 +9,19 @@
                     <h1 class="mat-display-1">Cadastrar Usuário!</h1>
                 </mat-card-title>
                 <mat-card-subtitle>
-                    <p>Por favor, faça login para continuar</p>
+                    <p>Crie sua conta para começar a usar o sistema</p> <!-- ✅ Texto atualizado -->
                 </mat-card-subtitle>
             </mat-card-header>
 
             <mat-card-content>
-                <form [formGroup]="loginForm" (ngSubmit)="Cadastrar()">
+                <form [formGroup]="registerForm" (ngSubmit)="Cadastrar()"> <!-- ✅ MUDADO: loginForm → registerForm -->
 
                     <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Nome de Usário</mat-label>
-                        <input matInput formControlName="name_user">
+                        <mat-label>Nome Completo</mat-label> <!-- ✅ Label atualizada -->
+                        <input matInput formControlName="name" placeholder="Seu nome completo"> <!-- ✅ MUDADO: name_user → name -->
                         <mat-icon matSuffix>person</mat-icon>
-                        <mat-error *ngIf="loginForm.get('name_user')?.hasError('required')">
-                            Nome de Usário é obrigatório
-                        </mat-error>
-                        <mat-error *ngIf="loginForm.get('name_user')?.hasError('name_user')">
-                            Por favor, insira um Nome de Usário válido
+                        <mat-error *ngIf="registerForm.get('name')?.hasError('required')"> <!-- ✅ MUDADO: name_user → name -->
+                            Nome é obrigatório
                         </mat-error>
                     </mat-form-field>
 
@@ -32,10 +29,10 @@
                         <mat-label>E-mail</mat-label>
                         <input matInput formControlName="email" placeholder="exemplo@email.com">
                         <mat-icon matSuffix>mail</mat-icon>
-                        <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+                        <mat-error *ngIf="registerForm.get('email')?.hasError('required')"> <!-- ✅ MUDADO: loginForm → registerForm -->
                             E-mail é obrigatório
                         </mat-error>
-                        <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+                        <mat-error *ngIf="registerForm.get('email')?.hasError('email')"> <!-- ✅ MUDADO: loginForm → registerForm -->
                             Por favor, insira um e-mail válido
                         </mat-error>
                     </mat-form-field>
@@ -46,10 +43,10 @@
                         <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
                             <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                         </button>
-                        <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                        <mat-error *ngIf="registerForm.get('password')?.hasError('required')"> <!-- ✅ MUDADO: loginForm → registerForm -->
                             Senha é obrigatória
                         </mat-error>
-                        <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+                        <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')"> <!-- ✅ MUDADO: loginForm → registerForm -->
                             A senha deve ter pelo menos 6 caracteres
                         </mat-error>
                     </mat-form-field>
@@ -62,20 +59,27 @@
                             (click)="hideConfirmPassword = !hideConfirmPassword">
                             <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                         </button>
-                        <mat-error *ngIf="loginForm.get('confirmPassword')?.hasError('required')">
+                        <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('required')"> <!-- ✅ MUDADO: loginForm → registerForm -->
                             Confirmação de senha é obrigatória
                         </mat-error>
-                        <mat-error *ngIf="loginForm.get('confirmPassword')?.hasError('passwordMismatch')">
+                        <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch')"> <!-- ✅ MUDADO: loginForm → registerForm -->
                             As senhas não coincidem
                         </mat-error>
                     </mat-form-field>
 
                     <button mat-raised-button color="primary" class="full-width" type="submit"
-                        [disabled]="!loginForm.valid || isLoading">
+                        [disabled]="!registerForm.valid || isLoading"> <!-- ✅ MUDADO: loginForm → registerForm -->
                         <span *ngIf="!isLoading">Cadastrar</span>
                         <mat-spinner *ngIf="isLoading" diameter="24"></mat-spinner>
                     </button>
                 </form>
+
+                <!-- Link para login -->
+                <div class="login-link">
+                    <p>Já tem uma conta? 
+                        <a (click)="backLogin()" class="link">Faça login aqui</a>
+                    </p>
+                </div>
             </mat-card-content>
         </mat-card>
     </div>

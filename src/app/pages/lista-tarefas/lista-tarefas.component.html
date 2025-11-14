@@ -1,9 +1,7 @@
 <div class="container-fluid p-0">
   <!-- App Bar -->
   <mat-toolbar color="primary" class="mat-elevation-z6">
-
     <span class="app-title">Agendamento de Serviços</span>
-
     <span class="spacer"></span>
 
     <button mat-icon-button [matMenuTriggerFor]="userMenu">
@@ -28,8 +26,14 @@
 
   <!-- Main Content -->
   <div class="main-content">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Carregando serviços...</p>
+    </div>
+
     <!-- Formulário de Adição -->
-    <mat-card class="form-card mat-elevation-z4">
+    <mat-card class="form-card mat-elevation-z4" *ngIf="!isLoading">
       <mat-card-header>
         <mat-card-title>Adicionar Novo Serviço</mat-card-title>
       </mat-card-header>
@@ -38,21 +42,24 @@
         <form>
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Serviço</mat-label>
-            <input matInput [(ngModel)]="novaTarefa" name="novaTarefa" placeholder="Descrição do serviço">
+            <input matInput [(ngModel)]="novaTarefa" name="novaTarefa" placeholder="Descrição do serviço" required>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Data Limite</mat-label>
-            <input matInput [(ngModel)]="novaDataLimite" name="novaDataLimite" type="date">
+            <input matInput [(ngModel)]="novaDataLimite" name="novaDataLimite" type="date" required>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Descrição</mat-label>
-            <textarea matInput [(ngModel)]="novaDescricao" name="novaDescricao" rows="3"></textarea>
+            <textarea matInput [(ngModel)]="novaDescricao" name="novaDescricao" rows="3" required></textarea>
           </mat-form-field>
 
           <div class="form-actions">
-            <button mat-raised-button color="primary" (click)="adicionarTarefa()">Adicionar</button>
+            <button mat-raised-button color="primary" (click)="adicionarTarefa()"
+              [disabled]="!novaTarefa || !novaDataLimite || !novaDescricao">
+              Adicionar
+            </button>
             <button mat-stroked-button color="warn" (click)="limpar()">Limpar</button>
           </div>
         </form>
@@ -60,7 +67,7 @@
     </mat-card>
 
     <!-- Listas de Tarefas -->
-    <div class="task-lists">
+    <div class="task-lists" *ngIf="!isLoading">
       <!-- Pendentes -->
       <mat-card class="task-list">
         <mat-card-header>
@@ -78,11 +85,11 @@
                   class="task-checkbox"></mat-checkbox>
 
                 <div class="task-content">
-                  <h3 class="task-title">{{ tarefa.tarefa }}</h3>
+                  <h3 class="task-title">{{ tarefa.titulo }}</h3> <!-- ✅ MUDADO: tarefa.tarefa → tarefa.titulo -->
                   <div class="task-meta">
                     <span class="task-date">
                       <mat-icon>event</mat-icon>
-                      {{ tarefa.dataLimite | date:'dd/MM/yyyy' }}
+                      {{ tarefa.dataLimite }}
                     </span>
                   </div>
                   <p class="task-description">{{ tarefa.descricao }}</p>
@@ -127,11 +134,11 @@
                   class="task-checkbox"></mat-checkbox>
 
                 <div class="task-content">
-                  <h3 class="task-title">{{ tarefa.tarefa }}</h3>
+                  <h3 class="task-title">{{ tarefa.titulo }}</h3> <!-- ✅ MUDADO: tarefa.tarefa → tarefa.titulo -->
                   <div class="task-meta">
                     <span class="task-date">
                       <mat-icon>event</mat-icon>
-                      {{ tarefa.dataLimite | date:'dd/MM/yyyy' }}
+                      {{ tarefa.dataLimite }}
                     </span>
                   </div>
                   <p class="task-description">{{ tarefa.descricao }}</p>
@@ -176,11 +183,11 @@
                   class="task-checkbox" checked></mat-checkbox>
 
                 <div class="task-content">
-                  <h3 class="task-title">{{ tarefa.tarefa }}</h3>
+                  <h3 class="task-title">{{ tarefa.titulo }}</h3> <!-- ✅ MUDADO: tarefa.tarefa → tarefa.titulo -->
                   <div class="task-meta">
                     <span class="task-date">
                       <mat-icon>event</mat-icon>
-                      {{ tarefa.dataLimite | date:'dd/MM/yyyy' }}
+                      {{ tarefa.dataLimite }}
                     </span>
                   </div>
                   <p class="task-description">{{ tarefa.descricao }}</p>

@@ -1,32 +1,33 @@
 import { Component, OnInit, ChangeDetectorRef, AfterViewInit } from '@angular/core';
-import { Tarefa } from '../../shared/models/tarefa.interface';
-import Swal from 'sweetalert2';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+
+// Importe o AuthService
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-cadastrar',
   templateUrl: './cadastrar.component.html',
   styleUrls: ['./cadastrar.component.css']
 })
-
 export class CadastrarComponent implements OnInit, AfterViewInit {
 
-  loginForm: FormGroup;
+  registerForm: FormGroup;
   hidePassword = true;
   isLoading = false;
   hideConfirmPassword = true;
-
 
   constructor(
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService // ✅ Adicione o AuthService
   ) {
-    this.loginForm = this.fb.group({
-      name_user: ['', Validators.required],
+    this.registerForm = this.fb.group({
+      name: ['', Validators.required], // ✅ MUDADO: name_user → name
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
@@ -65,54 +66,64 @@ export class CadastrarComponent implements OnInit, AfterViewInit {
   }
 
   Cadastrar() {
-    if (this.loginForm.valid) {
-      const userEmail = this.loginForm.value.email;
-      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-
-      const emailAlreadyExists = existingUsers.some((user: any) => user.email == userEmail);
-
-      if (emailAlreadyExists) {
-        Swal.fire({
-          icon: 'error',
-          title: 'E-mail já cadastrado',
-          text: 'Este e-mail já está em uso. Por favor, use outro ou faça login.',
-          confirmButtonText: 'Entendi'
-        });
-        return;
-      }
-
-      const userId = 'user_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+    if (this.registerForm.valid) {
+      this.isLoading = true;
 
       const userData = {
-        id: userId,
-        name_user: this.loginForm.value.name_user,
-        email: userEmail,
-        password: this.loginForm.value.password
+        name: this.registerForm.value.name, // ✅ MUDADO: name_user → name
+        email: this.registerForm.value.email,
+        password: this.registerForm.value.password,
+        confirmPassword: this.registerForm.value.confirmPassword
       };
 
-      existingUsers.push(userData);
-      localStorage.setItem('users', JSON.stringify(existingUsers));
+      // ✅ CHAMADA PARA A API
+      this.authService.register(userData).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          
+          Swal.fire({
+            title: 'Carregando...',
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          });
 
-      Swal.fire({
-        title: 'Carregando...',
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
+          setTimeout(() => {
+            Swal.close();
+            Swal.fire({
+              icon: 'success',
+              title: 'Cadastro realizado!',
+              text: 'Você será redirecionado para o login',
+              timer: 2000,
+              showConfirmButton: false
+            }).then(() => {
+              this.router.navigate(['/login']);
+            });
+          }, 2000);
+        },
+        error: (error) => {
+          this.isLoading = false;
+          
+          let errorMessage = 'Erro ao realizar cadastro';
+          
+          if (error.error && error.error.message) {
+            errorMessage = error.error.message;
+          } else if (error.status === 0) {
+            errorMessage = 'Servidor indisponível. Verifique se o backend está rodando.';
+          } else if (error.status === 400) {
+            errorMessage = 'Dados inválidos. Verifique os campos preenchidos.';
+          }
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro no cadastro',
+            text: errorMessage,
+            confirmButtonText: 'Entendi'
+          });
         }
       });
 
-      setTimeout(() => {
-        Swal.close();
-        Swal.fire({
-          icon: 'success',
-          title: 'Cadastro realizado!',
-          text: 'Você será redirecionado para o login',
-          timer: 2000,
-          showConfirmButton: false
-        }).then(() => {
-          this.router.navigate(['/login']);
-        });
-      }, 2000);
     } else {
       Swal.fire({
         icon: 'error',

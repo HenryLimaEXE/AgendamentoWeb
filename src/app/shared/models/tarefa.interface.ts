@@ -1,7 +1,9 @@
 export interface Tarefa {
-  tarefa: string;
+  id: number;
+  titulo: string;        // ✅ DEVE ser 'titulo' (não 'tarefa')
   dataLimite: string;
   descricao: string;
   concluida: boolean;
-  status: 'pendente' | 'fazendo' | 'concluido'; // novo campo
+  status: string;
+  userId: number;
 }

@@ -19,51 +19,43 @@ export interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://localhost:PORT/api/auth'; // Substitua PORT pela porta da sua API
+  private apiUrl = 'http://localhost:5052/api';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    this.loadUserFromToken();
+    this.loadUserFromStorage();
   }
 
   register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userData);
+    return this.http.post(`${this.apiUrl}/Auth/register`, userData);
   }
 
   login(credentials: { email: string; password: string }): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials)
+    return this.http.post<LoginResponse>(`${this.apiUrl}/Auth/login`, credentials)
       .pipe(
         tap(response => {
           localStorage.setItem('token', response.token);
+          localStorage.setItem('user', JSON.stringify(response.user));
           this.currentUserSubject.next(response.user);
         })
       );
   }
 
-  forgotPassword(email: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/forgot-password`, { email });
-  }
-
-  resetPassword(resetData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/reset-password`, resetData);
+  updatePassword(updateData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/Auth/update-password`, updateData);
   }
 
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.currentUserSubject.next(null);
   }
 
-  private loadUserFromToken(): void {
-    const token = localStorage.getItem('token');
-    if (token) {
-      // Decodificar token JWT para obter informações do usuário
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const user: User = {
-        id: parseInt(payload.nameid),
-        name: payload.unique_name,
-        email: payload.email
-      };
+  private loadUserFromStorage(): void {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const user: User = JSON.parse(userStr);
       this.currentUserSubject.next(user);
     }
   }
@@ -74,5 +66,9 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return !!this.getToken();
+  }
+
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
   }
 }

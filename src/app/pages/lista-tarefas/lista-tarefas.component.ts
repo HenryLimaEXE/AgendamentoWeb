@@ -1,18 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { Tarefa } from '../../shared/models/tarefa.interface';
-import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import Swal from 'sweetalert2';
+
+import { TarefaService } from '../../services/tarefa.service';
+import { AuthService } from '../../services/auth.service';
+import { Tarefa } from '../../shared/models/tarefa.interface';
 
 @Component({
   selector: 'app-lista-tarefas',
   templateUrl: './lista-tarefas.component.html',
   styleUrls: ['./lista-tarefas.component.css'],
-    host: {
+  host: {
     class: 'src/app/app.component.css'
   }
 })
-
 export class ListaTarefasComponent implements OnInit {
   userName: string | null = null;
   loggedUser: any = null;
@@ -24,28 +26,40 @@ export class ListaTarefasComponent implements OnInit {
   novaDataLimite = '';
   novaDescricao = '';
   dataInvalida: any;
+  isLoading = false;
 
-  constructor(private router: Router, private snackBar: MatSnackBar) { }
+  constructor(
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private tarefaService: TarefaService,
+    private authService: AuthService
+  ) { }
 
   ngOnInit() {
-    this.loggedUser = JSON.parse(localStorage.getItem('loggedUser') || '{}');
+    this.loggedUser = this.authService.getCurrentUser(); // ✅ Agora funciona
+    if (!this.loggedUser) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.userName = this.loggedUser.name || 'Usuário Desconhecido';
     this.carregarTarefas();
   }
 
   carregarTarefas() {
-    const userKey = `tarefas_${this.loggedUser.id}`;
-    const tarefasFromStorage = localStorage.getItem(userKey);
-
-    if (tarefasFromStorage) {
-      this.tarefas = JSON.parse(tarefasFromStorage);
-      this.atualizarListas();
-    }
-  }
-
-  salvarTarefas() {
-    const userKey = `tarefas_${this.loggedUser.id}`;
-    localStorage.setItem(userKey, JSON.stringify(this.tarefas));
+    this.isLoading = true;
+    this.tarefaService.getTarefasByUser(this.loggedUser.id).subscribe({
+      next: (tarefas) => {
+        this.tarefas = tarefas;
+        this.atualizarListas();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar tarefas:', error);
+        this.snackBar.open('Erro ao carregar tarefas', 'Fechar', { duration: 3000 });
+        this.isLoading = false;
+      }
+    });
   }
 
   formatarData(event: any): void {
@@ -80,9 +94,6 @@ export class ListaTarefasComponent implements OnInit {
     }
   }
 
-
-  //#region CRUD TARFAS
-
   limpar() {
     this.novaTarefa = '';
     this.novaDataLimite = '';
@@ -95,22 +106,25 @@ export class ListaTarefasComponent implements OnInit {
       return;
     }
 
-    const novaTarefa: Tarefa = {
-      tarefa: this.novaTarefa,
+    const novaTarefa = {
+      titulo: this.novaTarefa,
       dataLimite: this.novaDataLimite,
       descricao: this.novaDescricao,
-      concluida: false,
-      status: 'pendente'
+      userId: this.loggedUser.id
     };
 
-    this.tarefas.push(novaTarefa);
-    this.salvarTarefas();
-    this.atualizarListas();
-
-    // Limpar campos
-    this.novaTarefa = '';
-    this.novaDataLimite = '';
-    this.novaDescricao = '';
+    this.tarefaService.criarTarefa(novaTarefa).subscribe({
+      next: (tarefa) => {
+        this.tarefas.push(tarefa);
+        this.atualizarListas();
+        this.limpar();
+        this.snackBar.open('Tarefa adicionada com sucesso!', 'Fechar', { duration: 3000 });
+      },
+      error: (error) => {
+        console.error('Erro ao adicionar tarefa:', error);
+        this.snackBar.open('Erro ao adicionar tarefa', 'Fechar', { duration: 3000 });
+      }
+    });
   }
 
   async editarTarefa(index: number, lista: Tarefa[]) {
@@ -119,8 +133,8 @@ export class ListaTarefasComponent implements OnInit {
     const { value: formValues } = await Swal.fire({
       title: 'Editar Tarefa',
       html:
-        `<input id="tarefa" class="swal2-input" placeholder="Tarefa" value="${tarefa.tarefa}">
-         <input id="data" class="swal2-input" type="date" value="${tarefa.dataLimite}">
+        `<input id="titulo" class="swal2-input" placeholder="Tarefa" value="${tarefa.titulo}">
+         <input id="dataLimite" class="swal2-input" placeholder="Data (DD/MM/AAAA)" value="${tarefa.dataLimite}">
          <textarea id="descricao" class="swal2-textarea" placeholder="Descrição">${tarefa.descricao}</textarea>`,
       focusConfirm: false,
       showCancelButton: true,
@@ -128,23 +142,42 @@ export class ListaTarefasComponent implements OnInit {
       cancelButtonText: 'Cancelar',
       preConfirm: () => {
         return {
-          tarefa: (document.getElementById('tarefa') as HTMLInputElement).value,
-          dataLimite: (document.getElementById('data') as HTMLInputElement).value,
+          titulo: (document.getElementById('titulo') as HTMLInputElement).value,
+          dataLimite: (document.getElementById('dataLimite') as HTMLInputElement).value,
           descricao: (document.getElementById('descricao') as HTMLTextAreaElement).value
         };
       }
     });
 
     if (formValues) {
-      tarefa.tarefa = formValues.tarefa;
-      tarefa.dataLimite = formValues.dataLimite;
-      tarefa.descricao = formValues.descricao;
-      this.salvarTarefas();
-      this.atualizarListas();
+      const tarefaAtualizada = {
+        titulo: formValues.titulo,
+        dataLimite: formValues.dataLimite,
+        descricao: formValues.descricao,
+        concluida: tarefa.concluida,
+        status: tarefa.status
+      };
+
+      this.tarefaService.atualizarTarefa(tarefa.id, tarefaAtualizada).subscribe({
+        next: (tarefaAtualizada) => {
+          const index = this.tarefas.findIndex(t => t.id === tarefa.id);
+          if (index !== -1) {
+            this.tarefas[index] = { ...this.tarefas[index], ...tarefaAtualizada };
+            this.atualizarListas();
+          }
+          this.snackBar.open('Tarefa atualizada com sucesso!', 'Fechar', { duration: 3000 });
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar tarefa:', error);
+          this.snackBar.open('Erro ao atualizar tarefa', 'Fechar', { duration: 3000 });
+        }
+      });
     }
   }
 
   excluirTarefa(index: number, lista: Tarefa[]) {
+    const tarefa = lista[index];
+
     Swal.fire({
       title: 'Tem certeza?',
       text: "Você não poderá reverter isso!",
@@ -155,11 +188,17 @@ export class ListaTarefasComponent implements OnInit {
       confirmButtonText: 'Sim, excluir!'
     }).then((result) => {
       if (result.isConfirmed) {
-        const tarefa = lista[index];
-        this.tarefas = this.tarefas.filter(t => t !== tarefa);
-        this.salvarTarefas();
-        this.atualizarListas();
-        Swal.fire('Excluído!', 'Sua tarefa foi excluída.', 'success');
+        this.tarefaService.excluirTarefa(tarefa.id).subscribe({
+          next: () => {
+            this.tarefas = this.tarefas.filter(t => t.id !== tarefa.id);
+            this.atualizarListas();
+            Swal.fire('Excluído!', 'Sua tarefa foi excluída.', 'success');
+          },
+          error: (error) => {
+            console.error('Erro ao excluir tarefa:', error);
+            Swal.fire('Erro!', 'Não foi possível excluir a tarefa.', 'error');
+          }
+        });
       }
     });
   }
@@ -172,35 +211,38 @@ export class ListaTarefasComponent implements OnInit {
 
   alternarStatusTarefa(index: number, lista: Tarefa[]) {
     const tarefa = lista[index];
-    tarefa.concluida = !tarefa.concluida;
 
-    if (tarefa.concluida) {
-      tarefa.status = 'concluido';
-    } else {
-      // Define um status padrão quando desmarca
-      tarefa.status = lista === this.tarefasAFazer ? 'fazendo' : 'pendente';
-    }
-
-    this.salvarTarefas();
-    this.atualizarListas();
+    this.tarefaService.alternarStatus(tarefa.id).subscribe({
+      next: () => {
+        tarefa.concluida = !tarefa.concluida;
+        tarefa.status = tarefa.concluida ? 'concluido' : 'pendente';
+        this.atualizarListas();
+      },
+      error: (error) => {
+        console.error('Erro ao alternar status:', error);
+        this.snackBar.open('Erro ao alterar status da tarefa', 'Fechar', { duration: 3000 });
+      }
+    });
   }
 
   moverParaFazendo(index: number, listaOrigem: Tarefa[]) {
     const tarefa = listaOrigem[index];
-    tarefa.status = 'fazendo';
-    this.salvarTarefas();
-    this.atualizarListas();
-  }
 
-  atualizarLocalStorage() {
-    localStorage.setItem('tarefas', JSON.stringify(this.tarefas));
+    this.tarefaService.moverParaFazendo(tarefa.id).subscribe({
+      next: () => {
+        tarefa.status = 'fazendo';
+        tarefa.concluida = false;
+        this.atualizarListas();
+      },
+      error: (error) => {
+        console.error('Erro ao mover tarefa:', error);
+        this.snackBar.open('Erro ao mover tarefa', 'Fechar', { duration: 3000 });
+      }
+    });
   }
 
   redirecionarParaRedefinirSenha() {
-    const loggedUser = JSON.parse(localStorage.getItem('loggedUser') || '{}');
-    const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-
-    if (!loggedUser) {
+    if (!this.loggedUser) {
       Swal.fire('Você não está logado!', 'Faça login para redefinir sua senha.', 'error');
       return;
     }
@@ -228,38 +270,35 @@ export class ListaTarefasComponent implements OnInit {
           return false;
         }
 
-        if (loggedUser.password !== currentPassword) {
-          Swal.showValidationMessage('A senha original está incorreta');
-          return false;
-        }
-
         if (newPassword !== confirmNewPassword) {
           Swal.showValidationMessage('As novas senhas não coincidem');
           return false;
         }
 
-        loggedUser.password = newPassword;
-        localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
-
-        const userIndex = storedUsers.findIndex((user: any) => user.email === loggedUser.email);
-        if (userIndex !== -1) {
-          storedUsers[userIndex].password = newPassword;
-          localStorage.setItem('users', JSON.stringify(storedUsers));
-        }
-
-        return true;
+        return {
+          email: this.loggedUser.email,
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+          confirmNewPassword: confirmNewPassword
+        };
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire('Senha Atualizada!', 'Sua senha foi atualizada com sucesso.', 'success');
+        this.authService.updatePassword(result.value).subscribe({
+          next: () => {
+            Swal.fire('Senha Atualizada!', 'Sua senha foi atualizada com sucesso.', 'success');
+          },
+          error: (error) => {
+            const errorMessage = error.error?.message || 'Erro ao atualizar senha';
+            Swal.fire('Erro!', errorMessage, 'error');
+          }
+        });
       }
     });
   }
 
   logout() {
-    localStorage.removeItem('loggedUser');
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
-
-
 }

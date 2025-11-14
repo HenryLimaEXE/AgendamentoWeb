@@ -145,3 +145,30 @@ body {
 .login-card {
   position: relative;
 }
+
+.login-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.login-link p {
+    margin: 0;
+    color: #666;
+}
+
+.link {
+    color: #3f51b5;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.link:hover {
+    color: #303f9f;
+}
+
+/* Estilo para o spinner no botão */
+button mat-spinner {
+    margin: 0 auto;
+}
