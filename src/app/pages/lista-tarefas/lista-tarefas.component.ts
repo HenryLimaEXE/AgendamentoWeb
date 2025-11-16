@@ -119,6 +119,7 @@ export class ListaTarefasComponent implements OnInit {
         this.atualizarListas();
         this.limpar();
         this.snackBar.open('Tarefa adicionada com sucesso!', 'Fechar', { duration: 3000 });
+        window.location.reload();
       },
       error: (error) => {
         console.error('Erro ao adicionar tarefa:', error);
@@ -166,6 +167,7 @@ export class ListaTarefasComponent implements OnInit {
             this.atualizarListas();
           }
           this.snackBar.open('Tarefa atualizada com sucesso!', 'Fechar', { duration: 3000 });
+          window.location.reload();
         },
         error: (error) => {
           console.error('Erro ao atualizar tarefa:', error);
@@ -193,6 +195,7 @@ export class ListaTarefasComponent implements OnInit {
             this.tarefas = this.tarefas.filter(t => t.id !== tarefa.id);
             this.atualizarListas();
             Swal.fire('Excluído!', 'Sua tarefa foi excluída.', 'success');
+            window.location.reload();
           },
           error: (error) => {
             console.error('Erro ao excluir tarefa:', error);
@@ -217,6 +220,7 @@ export class ListaTarefasComponent implements OnInit {
         tarefa.concluida = !tarefa.concluida;
         tarefa.status = tarefa.concluida ? 'concluido' : 'pendente';
         this.atualizarListas();
+        window.location.reload();
       },
       error: (error) => {
         console.error('Erro ao alternar status:', error);
@@ -233,6 +237,7 @@ export class ListaTarefasComponent implements OnInit {
         tarefa.status = 'fazendo';
         tarefa.concluida = false;
         this.atualizarListas();
+        window.location.reload();
       },
       error: (error) => {
         console.error('Erro ao mover tarefa:', error);
@@ -287,6 +292,7 @@ export class ListaTarefasComponent implements OnInit {
         this.authService.updatePassword(result.value).subscribe({
           next: () => {
             Swal.fire('Senha Atualizada!', 'Sua senha foi atualizada com sucesso.', 'success');
+            window.location.reload();
           },
           error: (error) => {
             const errorMessage = error.error?.message || 'Erro ao atualizar senha';
