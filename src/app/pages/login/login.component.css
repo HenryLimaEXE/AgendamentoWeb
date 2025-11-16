@@ -159,3 +159,219 @@ footer {
   background-color: #f44336 !important;
   color: white !important;
 }
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+/* Acessibilidade - Alto Contraste */
+body.high-contrast .login-container {
+  background: black !important;
+}
+
+body.very-high-contrast .login-container {
+  background: black !important;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+body.high-contrast .login-card {
+  background: black !important;
+  color: white !important;
+  border: 3px solid yellow !important;
+}
+
+body.very-high-contrast .login-card {
+  background: black !important;
+  color: yellow !important;
+  border: 3px solid white !important;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+body.high-contrast .login-header h1 {
+  color: white !important;
+}
+
+body.very-high-contrast .login-header h1 {
+  color: yellow !important;
+}
+
+.back-button {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+}
+
+body.high-contrast .back-button {
+  color: white !important;
+  background: yellow !important;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* Campos de formulário com acessibilidade */
+mat-form-field {
+  width: 100%;
+}
+
+body.high-contrast .mat-form-field {
+  background: black !important;
+}
+
+body.high-contrast .mat-input-element {
+  background: black !important;
+  color: white !important;
+  border: 2px solid yellow !important;
+}
+
+body.very-high-contrast .mat-input-element {
+  background: black !important;
+  color: yellow !important;
+  border: 2px solid white !important;
+}
+
+body.high-contrast .mat-form-field-label {
+  color: white !important;
+}
+
+body.very-high-contrast .mat-form-field-label {
+  color: yellow !important;
+}
+
+/* Botões com acessibilidade */
+button[mat-raised-button] {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+body.high-contrast button[mat-raised-button] {
+  background: yellow !important;
+  color: black !important;
+  border: 2px solid white !important;
+}
+
+body.very-high-contrast button[mat-raised-button] {
+  background: yellow !important;
+  color: black !important;
+  border: 2px solid white !important;
+  font-weight: bold;
+}
+
+/* Estados de hover e focus melhorados */
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+body.reduce-animation button:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Foco para navegação por teclado */
+button:focus,
+input:focus {
+  outline: 3px solid #667eea !important;
+  outline-offset: 2px !important;
+}
+
+body.high-contrast button:focus,
+body.high-contrast input:focus {
+  outline: 3px solid white !important;
+  outline-offset: 3px !important;
+}
+
+body.very-high-contrast button:focus,
+body.very-high-contrast input:focus {
+  outline: 3px solid yellow !important;
+  outline-offset: 3px !important;
+}
+
+/* Snackbar acessível */
+.error-snackbar {
+  background: #f44336 !important;
+  color: white !important;
+}
+
+.success-snackbar {
+  background: #4caf50 !important;
+  color: white !important;
+}
+
+body.high-contrast .error-snackbar {
+  background: #ff4444 !important;
+  color: black !important;
+  border: 2px solid white !important;
+}
+
+body.high-contrast .success-snackbar {
+  background: #00ff00 !important;
+  color: black !important;
+  border: 2px solid white !important;
+}
+
+/* Loading spinner */
+mat-spinner {
+  margin: 0 auto;
+}
+
+/* Links e textos */
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+body.high-contrast .login-link {
+  color: white !important;
+}
+
+body.very-high-contrast .login-link {
+  color: yellow !important;
+}
+
+.link {
+  color: #667eea;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+body.high-contrast .link {
+  color: yellow !important;
+}
+
+body.very-high-contrast .link {
+  color: white !important;
+}
+
+/* Responsividade com acessibilidade */
+@media (max-width: 480px) {
+  .login-card {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  body.high-contrast .login-card {
+    border-width: 2px !important;
+  }
+}

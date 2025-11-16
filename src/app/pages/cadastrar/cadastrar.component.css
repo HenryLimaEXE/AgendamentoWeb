@@ -147,28 +147,293 @@ body {
 }
 
 .login-link {
-    text-align: center;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e0e0e0;
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e0e0;
 }
 
 .login-link p {
-    margin: 0;
-    color: #666;
+  margin: 0;
+  color: #666;
 }
 
 .link {
-    color: #3f51b5;
-    cursor: pointer;
-    text-decoration: underline;
+  color: #3f51b5;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .link:hover {
-    color: #303f9f;
+  color: #303f9f;
 }
 
 /* Estilo para o spinner no botão */
 button mat-spinner {
-    margin: 0 auto;
+  margin: 0 auto;
+}
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+/* Acessibilidade - Fundo */
+body.high-contrast .login-container {
+  background: black !important;
+}
+
+body.very-high-contrast .login-container {
+  background: black !important;
+}
+
+body.grayscale .login-container {
+  filter: grayscale(100%);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+/* Acessibilidade - Card */
+body.high-contrast .login-card {
+  background: black !important;
+  color: white !important;
+  border: 3px solid yellow !important;
+}
+
+body.very-high-contrast .login-card {
+  background: black !important;
+  color: yellow !important;
+  border: 3px solid white !important;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+body.high-contrast .login-header h1 {
+  color: white !important;
+}
+
+body.very-high-contrast .login-header h1 {
+  color: yellow !important;
+}
+
+.back-button {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+body.high-contrast .back-button {
+  color: black !important;
+  background: yellow !important;
+}
+
+body.very-high-contrast .back-button {
+  color: black !important;
+  background: yellow !important;
+}
+
+/* Formulário */
+.full-width {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* Campos com acessibilidade */
+mat-form-field {
+  width: 100%;
+}
+
+body.high-contrast .mat-form-field-outline {
+  color: yellow !important;
+}
+
+body.very-high-contrast .mat-form-field-outline {
+  color: white !important;
+}
+
+body.high-contrast .mat-input-element {
+  background: black !important;
+  color: white !important;
+  caret-color: yellow !important;
+}
+
+body.very-high-contrast .mat-input-element {
+  background: black !important;
+  color: yellow !important;
+  caret-color: white !important;
+}
+
+/* Labels */
+body.high-contrast .mat-form-field-label {
+  color: white !important;
+}
+
+body.very-high-contrast .mat-form-field-label {
+  color: yellow !important;
+}
+
+/* Botões */
+button[mat-raised-button] {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+body.high-contrast button[mat-raised-button] {
+  background: yellow !important;
+  color: black !important;
+  border: 2px solid white !important;
+  font-weight: bold;
+}
+
+body.very-high-contrast button[mat-raised-button] {
+  background: yellow !important;
+  color: black !important;
+  border: 2px solid white !important;
+  font-weight: bold;
+}
+
+/* Estados dos botões */
+button[mat-raised-button]:hover:not([disabled]) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.reduce-animation button[mat-raised-button]:hover:not([disabled]) {
+  transform: none;
+  box-shadow: none;
+}
+
+button[mat-raised-button]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+body.high-contrast button[mat-raised-button]:disabled {
+  background: #666 !important;
+  color: #999 !important;
+}
+
+/* Foco para teclado */
+button:focus,
+input:focus,
+textarea:focus {
+  outline: 3px solid #667eea !important;
+  outline-offset: 2px !important;
+}
+
+body.high-contrast button:focus,
+body.high-contrast input:focus,
+body.high-contrast textarea:focus {
+  outline: 3px solid white !important;
+  outline-offset: 3px !important;
+}
+
+body.very-high-contrast button:focus,
+body.very-high-contrast input:focus,
+body.very-high-contrast textarea:focus {
+  outline: 3px solid yellow !important;
+  outline-offset: 3px !important;
+}
+
+/* Ícones nos campos */
+mat-icon {
+  transition: transform 0.2s ease;
+}
+
+body.reduce-animation mat-icon {
+  transition: none !important;
+}
+
+button:hover mat-icon {
+  transform: scale(1.1);
+}
+
+body.reduce-animation button:hover mat-icon {
+  transform: none !important;
+}
+
+/* Mensagens de erro */
+mat-error {
+  font-size: 0.875rem;
+}
+
+body.high-contrast mat-error {
+  color: #ff4444 !important;
+  font-weight: bold;
+}
+
+body.very-high-contrast mat-error {
+  color: #ff4444 !important;
+  font-weight: bold;
+}
+
+/* Loading spinner no botão */
+button mat-spinner {
+  margin: 0 auto;
+}
+
+/* Link para login */
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+body.high-contrast .login-link {
+  border-color: yellow !important;
+  color: white !important;
+}
+
+body.very-high-contrast .login-link {
+  border-color: white !important;
+  color: yellow !important;
+}
+
+.link {
+  color: #667eea;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+body.high-contrast .link {
+  color: yellow !important;
+}
+
+body.very-high-contrast .link {
+  color: white !important;
+}
+
+.link:hover {
+  text-decoration: none;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .login-card {
+    margin: 0.5rem;
+    padding: 1.5rem;
+  }
+
+  .login-header h1 {
+    font-size: 1.5rem;
+  }
 }

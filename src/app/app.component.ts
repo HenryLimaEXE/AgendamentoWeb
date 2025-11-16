@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +6,26 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'lista_tarefas';
+  
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.altKey && event.key === '1') {
+      event.preventDefault();
+      const accessibilityBtn = document.querySelector('.accessibility-floating-btn') as HTMLElement;
+      if (accessibilityBtn) {
+        accessibilityBtn.focus();
+      }
+    }
+    
+    if (event.key === 'Escape') {
+      this.closeAllModals();
+    }
+  }
+  
+  private closeAllModals() {
+    const modals = document.querySelectorAll('.modal, .accessibility-panel.open');
+    modals.forEach(modal => {
+      modal.classList.remove('open');
+    });
+  }
 }

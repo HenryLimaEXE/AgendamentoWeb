@@ -30,6 +30,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ApiInterceptor } from './services/api.interceptor';
+import { AccessibilityComponent } from './components/accessibilitity/accessibility.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { ApiInterceptor } from './services/api.interceptor';
     ListaTarefasComponent,
     LoginComponent,
     CadastrarComponent,
-    HeaderComponent
+    HeaderComponent,
+    AccessibilityComponent
   ],
 
   imports: [
@@ -65,6 +67,7 @@ import { ApiInterceptor } from './services/api.interceptor';
     MatNativeDateModule,
     MatSidenavModule,
     HttpClientModule,
+    
 
   ],
 

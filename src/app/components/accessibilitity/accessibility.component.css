@@ -1,0 +1,286 @@
+/* Botão Flutuante */
+.accessibility-floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.accessibility-floating-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.accessibility-floating-btn.active {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+/* Painel de Acessibilidade */
+.accessibility-panel {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 380px;
+  height: 100vh;
+  background: white;
+  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+}
+
+.accessibility-panel.open {
+  right: 0;
+}
+
+.accessibility-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: between;
+  align-items: center;
+}
+
+.accessibility-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  flex: 1;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.accessibility-content {
+  padding: 1rem;
+}
+
+/* Seções */
+.accessibility-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.accessibility-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Controles */
+.tool-group {
+  margin-bottom: 1rem;
+}
+
+.tool-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.font-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.font-controls button {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  min-width: 40px;
+}
+
+.font-controls button:hover {
+  background: #f5f5f5;
+}
+
+.font-controls span {
+  min-width: 60px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.button-group button {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Botões Gerais */
+button {
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+button:hover {
+  background: #f8f9fa;
+  border-color: #667eea;
+}
+
+button.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.reset-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  width: 100%;
+}
+
+.reset-btn:hover {
+  background: #c82333;
+}
+
+/* Overlay */
+.accessibility-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.accessibility-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Informações */
+.accessibility-info {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+}
+
+.accessibility-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.accessibility-info ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.accessibility-info li {
+  margin-bottom: 0.25rem;
+}
+
+kbd {
+  background: #333;
+  color: white;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+/* MODOS DE ACESSIBILIDADE (aplicados no body) */
+
+/* Alto Contraste */
+body.high-contrast {
+  background: black !important;
+  color: white !important;
+}
+
+body.high-contrast * {
+  background: black !important;
+  color: white !important;
+  border-color: yellow !important;
+}
+
+body.high-contrast button {
+  background: yellow !important;
+  color: black !important;
+  border: 2px solid white !important;
+}
+
+/* Contraste Máximo */
+body.very-high-contrast {
+  background: black !important;
+  color: yellow !important;
+}
+
+body.very-high-contrast * {
+  background: black !important;
+  color: yellow !important;
+  border-color: white !important;
+}
+
+/* Escala de Cinza */
+body.grayscale * {
+  filter: grayscale(100%) !important;
+}
+
+/* Fonte para Dislexia */
+body.dyslexia-friendly * {
+  font-family: "Open Dyslexic", "Comic Sans MS", sans-serif !important;
+  letter-spacing: 0.05em !important;
+  line-height: 1.8 !important;
+}
+
+/* Redução de Animações */
+body.reduce-animation * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  .accessibility-panel {
+    width: 100vw;
+    right: -100vw;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .button-group button {
+    min-width: auto;
+  }
+}

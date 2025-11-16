@@ -1,0 +1,113 @@
+<!-- Botão Flutuante de Acessibilidade -->
+<button 
+  class="accessibility-floating-btn"
+  (click)="togglePanel()"
+  aria-label="Abrir menu de acessibilidade"
+  title="Acessibilidade"
+  [class.active]="isPanelOpen">
+  <span class="accessibility-icon">♿</span>
+</button>
+
+<!-- Painel de Acessibilidade -->
+<div class="accessibility-panel" [class.open]="isPanelOpen">
+  <div class="accessibility-header">
+    <h2>Recursos de Acessibilidade</h2>
+    <button class="close-btn" (click)="togglePanel()" aria-label="Fechar menu">
+      ✕
+    </button>
+  </div>
+
+  <div class="accessibility-content">
+    
+    <!-- 👁️ DEFICIÊNCIA VISUAL -->
+    <section class="accessibility-section">
+      <h3>👁️ Deficiência Visual</h3>
+      
+      <div class="tool-group">
+        <label>Tamanho da Fonte</label>
+        <div class="font-controls">
+          <button (click)="decreaseFontSize()" aria-label="Diminuir fonte">A-</button>
+          <span>{{ fontSize }}%</span>
+          <button (click)="increaseFontSize()" aria-label="Aumentar fonte">A+</button>
+          <button (click)="resetFontSize()" aria-label="Tamanho normal">A⭮</button>
+        </div>
+      </div>
+
+      <div class="tool-group">
+        <label>Contraste</label>
+        <div class="button-group">
+          <button 
+            [class.active]="contrastMode"
+            (click)="toggleContrast()">
+            Alto Contraste
+          </button>
+          <button 
+            [class.active]="highContrastMode"
+            (click)="toggleHighContrast()">
+            Contraste Máximo
+          </button>
+        </div>
+      </div>
+
+      <div class="tool-group">
+        <button 
+          [class.active]="grayscaleMode"
+          (click)="toggleGrayscale()">
+          {{ grayscaleMode ? '✅' : '⚪' }} Escala de Cinza
+        </button>
+      </div>
+    </section>
+
+    <!-- 📖 DISLEXIA -->
+    <section class="accessibility-section">
+      <h3>📖 Dislexia</h3>
+      <button 
+        [class.active]="dyslexiaMode"
+        (click)="toggleDyslexiaMode()">
+        {{ dyslexiaMode ? '✅' : '🔤' }} Fonte Amigável
+      </button>
+    </section>
+
+    <!-- ⚡ EPILEPSIA -->
+    <section class="accessibility-section">
+      <h3>⚡ Epilepsia</h3>
+      <button 
+        [class.active]="animationReduction"
+        (click)="toggleAnimationReduction()">
+        {{ animationReduction ? '✅' : '🎬' }} Reduzir Animações
+      </button>
+    </section>
+
+    <!-- 🖱️ DEFICIÊNCIA MOTORA -->
+    <section class="accessibility-section">
+      <h3>🖱️ Deficiência Motora</h3>
+      <button (click)="activateVirtualKeyboard()">
+        🎹 Teclado Virtual
+      </button>
+      <small>Use Tab para navegar e Enter para selecionar</small>
+    </section>
+
+    <!-- 🔄 RESET -->
+    <section class="accessibility-section">
+      <button class="reset-btn" (click)="resetAll()">
+        🔄 Redefinir Tudo
+      </button>
+    </section>
+
+    <!-- ℹ️ INFORMAÇÕES -->
+    <section class="accessibility-info">
+      <h4>Atalhos de Teclado</h4>
+      <ul>
+        <li><kbd>Tab</kbd> - Navegação</li>
+        <li><kbd>Enter</kbd> - Selecionar</li>
+        <li><kbd>Esc</kbd> - Fechar menus</li>
+        <li><kbd>Alt + 1</kbd> - Menu acesso rápido</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<!-- Overlay para fechar o painel -->
+<div class="accessibility-overlay" 
+     [class.active]="isPanelOpen" 
+     (click)="togglePanel()"></div>
