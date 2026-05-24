@@ -1,0 +1,89 @@
+<!-- payment-modal.component.html -->
+<div class="payment-modal-overlay">
+    <div class="payment-modal-container">
+        <div class="payment-header">
+            <h2>💳 Finalizar Assinatura</h2>
+            <button class="close-btn" (click)="close()">✕</button>
+        </div>
+
+        <div class="plan-summary">
+            <h3>{{ data.plan.name }}</h3>
+            <div class="price">R$ {{ data.plan.price | number:'1.2-2' }}/mês</div>
+        </div>
+
+        <form [formGroup]="paymentForm">
+            <div class="payment-methods">
+                <label class="method-option" [class.selected]="selectedMethod === 'pix'">
+                    <input type="radio" formControlName="paymentMethod" value="pix">
+                    <span class="method-icon">📱</span>
+                    <span>PIX</span>
+                    <small>Imediato</small>
+                </label>
+
+                <label class="method-option" [class.selected]="selectedMethod === 'credit_card'">
+                    <input type="radio" formControlName="paymentMethod" value="credit_card">
+                    <span class="method-icon">💳</span>
+                    <span>Cartão</span>
+                    <small>Até 12x</small>
+                </label>
+
+                <label class="method-option" [class.selected]="selectedMethod === 'boleto'">
+                    <input type="radio" formControlName="paymentMethod" value="boleto">
+                    <span class="method-icon">📄</span>
+                    <span>Boleto</span>
+                    <small>3 dias</small>
+                </label>
+            </div>
+
+            <!-- Campos para Cartão de Crédito -->
+            <div class="card-fields" *ngIf="selectedMethod === 'credit_card'">
+                <div class="form-group">
+                    <label>Número do Cartão</label>
+                    <input type="text" formControlName="cardNumber" placeholder="0000 0000 0000 0000" maxlength="16">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nome no Cartão</label>
+                        <input type="text" formControlName="cardName" placeholder="Como está no cartão">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Validade</label>
+                        <input type="text" formControlName="cardExpiry" placeholder="MM/AA" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="text" formControlName="cardCvv" placeholder="123" maxlength="4">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Parcelas</label>
+                    <select formControlName="installments">
+                        <option *ngFor="let num of installments" [value]="num">
+                            {{ num }}x de R$ {{ (data.plan.price / num) | number:'1.2-2' }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- CPF para PIX e Boleto -->
+            <div class="form-group" *ngIf="selectedMethod === 'pix' || selectedMethod === 'boleto'">
+                <label>CPF</label>
+                <input type="text" formControlName="cpf" placeholder="000.000.000-00" mask="000.000.000-00">
+            </div>
+
+            <button type="button" class="btn-pay" (click)="processPayment()" [disabled]="isLoading">
+                {{ isLoading ? 'Processando...' : 'Pagar Agora' }}
+            </button>
+        </form>
+
+        <div class="security-info">
+            <p>🔒 Pagamento 100% seguro</p>
+            <p>✅ Suporte 24/7</p>
+        </div>
+    </div>
+</div>

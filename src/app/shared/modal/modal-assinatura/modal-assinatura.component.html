@@ -1,0 +1,62 @@
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+
+        <div class="modal-header">
+            <button class="close-btn" (click)="closeModal()">✕</button>
+            <div class="promo-badge">
+                🔥 OFERTA ESPECIAL 🔥
+            </div>
+            <h2 class="promo-title">Transforme sua experiência!</h2>
+            <p class="promo-subtitle">
+                Escolha o plano ideal para o seu negócio e ganhe <strong>30% OFF</strong> no primeiro mês!
+            </p>
+        </div>
+
+        <div class="plans-container">
+            <div *ngFor="let plan of plans" class="plan-card" [class.highlight]="plan.highlight"
+                [class.popular]="plan.popular">
+                <div class="popular-badge" *ngIf="plan.popular">
+                    ⭐ MAIS POPULAR ⭐
+                </div>
+
+                <h3 class="plan-name">{{ plan.name }}</h3>
+
+                <div class="price-container">
+                    <span class="currency">R$</span>
+                    <span class="price">{{ plan.price | number:'1.2-2' }}</span>
+                    <span class="period">/{{ plan.period }}</span>
+                </div>
+
+                <div class="promo-price" *ngIf="plan.popular">
+                    <span>De R$ {{ plan.price * 1.3 | number:'1.2-2' }}</span>
+                    <span class="discount">por apenas</span>
+                </div>
+
+                <ul class="features-list">
+                    <li *ngFor="let feature of plan.features">
+                        <span class="check-icon">✓</span>
+                        {{ feature }}
+                    </li>
+                </ul>
+
+                <button class="btn-plan" [class.btn-highlight]="plan.highlight" (click)="onSelectPlan(plan)">
+                    {{ plan.popular ? 'ASSINAR AGORA 🚀' : 'ESCOLHER PLANO' }}
+                </button>
+
+                <p class="guarantee" *ngIf="plan.popular">
+                    🔒 7 dias de garantia incondicional
+                </p>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <p class="footer-note">
+                🎁 Todos os planos incluem: Suporte 24/7 | Atualizações gratuitas | Cancele quando quiser
+            </p>
+            <button class="later-link" (click)="closeModal()">
+                Talvez depois
+            </button>
+        </div>
+
+    </div>
+</div>

@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 
 import { TarefaService } from '../../services/tarefa.service';
 import { AuthService } from '../../services/auth.service';
+import { SubscriptionService, CreateSubscriptionRequest } from '../../services/subscription.service';
 import { Tarefa } from '../../shared/models/tarefa.interface';
+import { ModalAssinaturaComponent, SubscriptionPlan } from '../../shared/modal/modal-assinatura/modal-assinatura.component';
+import { ModalMetodoPagamentoComponent } from '../../shared/modal/modal-metodo-pagamento/modal-metodo-pagamento.component';
 
 @Component({
   selector: 'app-lista-tarefas',
@@ -28,15 +32,19 @@ export class ListaTarefasComponent implements OnInit {
   dataInvalida: any;
   isLoading = false;
 
+  private modalShown = false;
+
   constructor(
     private router: Router,
     private snackBar: MatSnackBar,
     private tarefaService: TarefaService,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialog: MatDialog,
+    private subscriptionService: SubscriptionService
   ) { }
 
   ngOnInit() {
-    this.loggedUser = this.authService.getCurrentUser(); // ✅ Agora funciona
+    this.loggedUser = this.authService.getCurrentUser();
     if (!this.loggedUser) {
       this.router.navigate(['/login']);
       return;
@@ -44,6 +52,177 @@ export class ListaTarefasComponent implements OnInit {
 
     this.userName = this.loggedUser.name || 'Usuário Desconhecido';
     this.carregarTarefas();
+
+    this.mostrarModalAssinatura();
+  }
+
+  mostrarModalAssinatura() {
+    const modalAlreadyShown = localStorage.getItem('subscription_modal_shown');
+
+    if (modalAlreadyShown === 'true') {
+      return;
+    }
+
+    setTimeout(() => {
+      const dialogRef = this.dialog.open(ModalAssinaturaComponent, {
+        width: '100%',
+        maxWidth: '1300px',
+        panelClass: 'custom-modal',
+        disableClose: false,
+        backdropClass: 'modal-backdrop',
+        data: { userName: this.userName }
+      });
+
+      dialogRef.componentInstance.selectPlan.subscribe((plan: SubscriptionPlan) => {
+        this.processarAssinatura(plan);
+        dialogRef.close();
+      });
+
+      dialogRef.afterClosed().subscribe(() => {
+        localStorage.setItem('subscription_modal_shown', 'true');
+      });
+
+    }, 1000);
+  }
+
+  processarAssinatura(plan: SubscriptionPlan) {
+    this.salvarPlanoNoBackend(plan);
+  }
+  salvarPlanoNoBackend(plan: SubscriptionPlan) {
+    console.log('Processando assinatura:', {
+      userId: this.loggedUser.id,
+      userEmail: this.loggedUser.email,
+      userName: this.loggedUser.name,
+      planId: plan.id,
+      planName: plan.name,
+      price: plan.price,
+      period: plan.period,
+      selectedAt: new Date().toISOString()
+    });
+
+    this.dialog.closeAll();
+
+    const paymentDialog = this.dialog.open(ModalMetodoPagamentoComponent, {
+      width: '100%',
+      maxWidth: '550px',
+      panelClass: 'payment-modal',
+      disableClose: true,
+      data: {
+        plan: plan,
+        user: this.loggedUser
+      }
+    });
+
+    paymentDialog.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        localStorage.setItem('subscription_modal_shown', 'true');
+
+        this.atualizarStatusAssinatura(plan);
+
+        Swal.fire({
+          title: 'Assinatura ativada!',
+          text: `Sua assinatura ${plan.name} foi ativada com sucesso. Aproveite todos os benefícios!`,
+          icon: 'success',
+          confirmButtonText: 'Continuar',
+          confirmButtonColor: '#667eea'
+        });
+      } else if (result?.cancelled) {
+        Swal.fire({
+          title: 'Pagamento cancelado',
+          text: 'Você pode assinar a qualquer momento através da nossa página de planos.',
+          icon: 'info',
+          confirmButtonText: 'Ok',
+          confirmButtonColor: '#667eea'
+        });
+      }
+    });
+  }
+
+  atualizarStatusAssinatura(plan: SubscriptionPlan) {
+    const subscriptionData: CreateSubscriptionRequest = {
+      userId: this.loggedUser.id,
+      planId: plan.id,
+      planName: plan.name,
+      price: plan.price,
+      paymentMethod: 'pending'
+    };
+
+    this.subscriptionService.createSubscription(subscriptionData).subscribe({
+      next: (response) => {
+        console.log('Assinatura registrada no backend:', response);
+        localStorage.setItem('user_subscription', JSON.stringify({
+          planId: plan.id,
+          planName: plan.name,
+          status: 'active',
+          startDate: new Date()
+        }));
+      },
+      error: (error) => {
+        console.error('Erro ao registrar assinatura:', error);
+      }
+    });
+  }
+
+  redirecionarParaPagamentoExterno(plan: SubscriptionPlan) {
+
+    const paymentUrl = `https://pagamento.seusite.com/checkout?plan=${plan.id}&user=${this.loggedUser.id}`;
+
+    Swal.fire({
+      title: 'Redirecionando para pagamento',
+      text: `Você será redirecionado para finalizar o pagamento do plano ${plan.name}`,
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Continuar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.open(paymentUrl, '_blank');
+      }
+    });
+  }
+
+  criarAssinaturaDireta(plan: SubscriptionPlan) {
+    Swal.fire({
+      title: 'Processando...',
+      text: 'Criando sua assinatura',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    const subscriptionData: CreateSubscriptionRequest = {
+      userId: this.loggedUser.id,
+      planId: plan.id,
+      planName: plan.name,
+      price: plan.price,
+      paymentMethod: 'pix'
+    };
+
+    this.subscriptionService.createSubscription(subscriptionData).subscribe({
+      next: (response) => {
+        Swal.close();
+
+        Swal.fire({
+          title: 'Assinatura criada!',
+          text: `Sua assinatura ${plan.name} foi criada com sucesso. Aguarde a confirmação do pagamento.`,
+          icon: 'success',
+          confirmButtonText: 'Ok'
+        });
+
+        localStorage.setItem('subscription_modal_shown', 'true');
+      },
+      error: (error) => {
+        Swal.close();
+
+        Swal.fire({
+          title: 'Erro!',
+          text: error.message || 'Não foi possível criar sua assinatura. Tente novamente.',
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        });
+      }
+    });
   }
 
   carregarTarefas() {
@@ -304,6 +483,7 @@ export class ListaTarefasComponent implements OnInit {
   }
 
   logout() {
+    localStorage.removeItem('subscription_modal_shown');
     this.authService.logout();
     this.router.navigate(['/login']);
   }

@@ -31,6 +31,10 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ApiInterceptor } from './services/api.interceptor';
 import { AccessibilityComponent } from './components/accessibilitity/accessibility.component';
+import { ModalAssinaturaComponent } from './shared/modal/modal-assinatura/modal-assinatura.component';
+
+import { MatDialogModule } from '@angular/material/dialog';
+import { ModalMetodoPagamentoComponent } from './shared/modal/modal-metodo-pagamento/modal-metodo-pagamento.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +43,9 @@ import { AccessibilityComponent } from './components/accessibilitity/accessibili
     LoginComponent,
     CadastrarComponent,
     HeaderComponent,
-    AccessibilityComponent
+    AccessibilityComponent,
+    ModalAssinaturaComponent,
+    ModalMetodoPagamentoComponent
   ],
 
   imports: [
@@ -67,7 +73,7 @@ import { AccessibilityComponent } from './components/accessibilitity/accessibili
     MatNativeDateModule,
     MatSidenavModule,
     HttpClientModule,
-    
+    MatDialogModule
 
   ],
 
