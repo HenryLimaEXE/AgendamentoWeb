@@ -57,7 +57,7 @@ footer {
   }
 
   .mat-card-subtitle {
-    color: rgba(0, 0, 0, 0.6);
+    color: rgb(0, 0, 0) !important;
   }
 }
 
@@ -71,7 +71,7 @@ footer {
   margin-bottom: 24px;
 
   a {
-    color: #3f51b5;
+    color: #3e3f45;
     text-decoration: none;
     font-size: 0.875rem;
 
@@ -94,7 +94,7 @@ footer {
   }
 
   a {
-    color: #3f51b5;
+    color: #3e3f45;
     text-decoration: none;
     font-weight: 500;
 
@@ -159,7 +159,7 @@ body {
 }
 
 .link {
-  color: #3f51b5;
+  color: #3e3f45;
   cursor: pointer;
   text-decoration: underline;
 }
@@ -168,7 +168,6 @@ body {
   color: #303f9f;
 }
 
-/* Estilo para o spinner no botão */
 button mat-spinner {
   margin: 0 auto;
 }
@@ -183,7 +182,6 @@ button mat-spinner {
   transition: all 0.3s ease;
 }
 
-/* Acessibilidade - Fundo */
 body.high-contrast .login-container {
   background: black !important;
 }
@@ -203,7 +201,6 @@ body.grayscale .login-container {
   transition: all 0.3s ease;
 }
 
-/* Acessibilidade - Card */
 body.high-contrast .login-card {
   background: black !important;
   color: white !important;
@@ -246,13 +243,11 @@ body.very-high-contrast .back-button {
   background: yellow !important;
 }
 
-/* Formulário */
 .full-width {
   width: 100%;
   margin-bottom: 1rem;
 }
 
-/* Campos com acessibilidade */
 mat-form-field {
   width: 100%;
 }
@@ -277,7 +272,6 @@ body.very-high-contrast .mat-input-element {
   caret-color: white !important;
 }
 
-/* Labels */
 body.high-contrast .mat-form-field-label {
   color: white !important;
 }
@@ -286,7 +280,6 @@ body.very-high-contrast .mat-form-field-label {
   color: yellow !important;
 }
 
-/* Botões */
 button[mat-raised-button] {
   width: 100%;
   padding: 0.75rem;
@@ -309,7 +302,6 @@ body.very-high-contrast button[mat-raised-button] {
   font-weight: bold;
 }
 
-/* Estados dos botões */
 button[mat-raised-button]:hover:not([disabled]) {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -330,7 +322,6 @@ body.high-contrast button[mat-raised-button]:disabled {
   color: #999 !important;
 }
 
-/* Foco para teclado */
 button:focus,
 input:focus,
 textarea:focus {
@@ -352,7 +343,6 @@ body.very-high-contrast textarea:focus {
   outline-offset: 3px !important;
 }
 
-/* Ícones nos campos */
 mat-icon {
   transition: transform 0.2s ease;
 }
@@ -369,7 +359,6 @@ body.reduce-animation button:hover mat-icon {
   transform: none !important;
 }
 
-/* Mensagens de erro */
 mat-error {
   font-size: 0.875rem;
 }
@@ -384,12 +373,10 @@ body.very-high-contrast mat-error {
   font-weight: bold;
 }
 
-/* Loading spinner no botão */
 button mat-spinner {
   margin: 0 auto;
 }
 
-/* Link para login */
 .login-link {
   text-align: center;
   margin-top: 1.5rem;
@@ -426,7 +413,6 @@ body.very-high-contrast .link {
   text-decoration: none;
 }
 
-/* Responsividade */
 @media (max-width: 480px) {
   .login-card {
     margin: 0.5rem;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,7 +19,15 @@ import { ModalMetodoPagamentoComponent } from '../../shared/modal/modal-metodo-p
     class: 'src/app/app.component.css'
   }
 })
-export class ListaTarefasComponent implements OnInit {
+export class ListaTarefasComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('cpuCanvas') cpuCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('gpuCanvas') gpuCanvas!: ElementRef<HTMLCanvasElement>;
+
+  cpuUsage: number = 0;
+  gpuUsage: number = 0;
+  ramUsage: number = 0;
+  gpuSupported: boolean = true;
+
   userName: string | null = null;
   loggedUser: any = null;
   tarefas: Tarefa[] = [];
@@ -43,6 +51,23 @@ export class ListaTarefasComponent implements OnInit {
     private subscriptionService: SubscriptionService
   ) { }
 
+  private cpuDataPoints: number[] = Array(20).fill(0);
+  private gpuDataPoints: number[] = Array(20).fill(0);
+  private updateInterval: any;
+  private cpuCtx!: CanvasRenderingContext2D;
+  private gpuCtx!: CanvasRenderingContext2D;
+
+  ngAfterViewInit() {
+    this.initCanvases();
+    this.startMonitoring();
+  }
+
+  ngOnDestroy() {
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
+  }
+
   ngOnInit() {
     this.loggedUser = this.authService.getCurrentUser();
     if (!this.loggedUser) {
@@ -54,6 +79,106 @@ export class ListaTarefasComponent implements OnInit {
     this.carregarTarefas();
 
     this.mostrarModalAssinatura();
+  }
+
+  private initCanvases() {
+    if (this.cpuCanvas) {
+      this.cpuCtx = this.cpuCanvas.nativeElement.getContext('2d')!;
+    }
+    if (this.gpuCanvas) {
+      this.gpuCtx = this.gpuCanvas.nativeElement.getContext('2d')!;
+    }
+  }
+
+  private startMonitoring() {
+    this.updateInterval = setInterval(() => {
+      this.updateResourceUsage();
+    }, 1000);
+  }
+
+  private updateResourceUsage() {
+    // Simular consumo de CPU (substitua por chamada real à API)
+    this.cpuUsage = Math.floor(Math.random() * 100);
+
+    // Simular consumo de GPU
+    this.gpuUsage = Math.floor(Math.random() * 100);
+
+    // Simular consumo de RAM
+    this.ramUsage = Math.floor(Math.random() * 100);
+
+    // Atualizar gráficos
+    this.updateCpuChart();
+    this.updateGpuChart();
+  }
+
+  private updateCpuChart() {
+    if (!this.cpuCtx) return;
+
+    this.cpuDataPoints.push(this.cpuUsage);
+    this.cpuDataPoints.shift();
+
+    this.cpuCtx.clearRect(0, 0, 50, 30);
+    this.cpuCtx.beginPath();
+    this.cpuCtx.strokeStyle = '#4caf50';
+    this.cpuCtx.lineWidth = 1.5;
+
+    const stepX = 50 / (this.cpuDataPoints.length - 1);
+
+    this.cpuDataPoints.forEach((value, index) => {
+      const x = index * stepX;
+      const y = 30 - (value / 100) * 30;
+
+      if (index === 0) {
+        this.cpuCtx.moveTo(x, y);
+      } else {
+        this.cpuCtx.lineTo(x, y);
+      }
+    });
+
+    this.cpuCtx.stroke();
+  }
+
+  private updateGpuChart() {
+    if (!this.gpuCtx) return;
+
+    this.gpuDataPoints.push(this.gpuUsage);
+    this.gpuDataPoints.shift();
+
+    this.gpuCtx.clearRect(0, 0, 50, 30);
+    this.gpuCtx.beginPath();
+    this.gpuCtx.strokeStyle = '#2196f3';
+    this.gpuCtx.lineWidth = 1.5;
+
+    const stepX = 50 / (this.gpuDataPoints.length - 1);
+
+    this.gpuDataPoints.forEach((value, index) => {
+      const x = index * stepX;
+      const y = 30 - (value / 100) * 30;
+
+      if (index === 0) {
+        this.gpuCtx.moveTo(x, y);
+      } else {
+        this.gpuCtx.lineTo(x, y);
+      }
+    });
+
+    this.gpuCtx.stroke();
+  }
+
+  private async getRealSystemStats() {
+    try {
+      const response = await fetch('/api/system-stats');
+      const stats = await response.json();
+
+      this.cpuUsage = stats.cpu;
+      this.gpuUsage = stats.gpu;
+      this.ramUsage = stats.ram;
+    } catch (error) {
+      console.warn('Erro ao obter estatísticas do sistema:', error);
+      this.cpuUsage = Math.floor(Math.random() * 100);
+      this.gpuUsage = Math.floor(Math.random() * 100);
+      this.ramUsage = Math.floor(Math.random() * 100);
+    }
   }
 
   mostrarModalAssinatura() {

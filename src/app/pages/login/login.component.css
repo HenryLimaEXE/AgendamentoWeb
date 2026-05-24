@@ -71,7 +71,7 @@ footer {
   margin-bottom: 24px;
 
   a {
-    color: #3f51b5;
+    color: #3e3f45;
     text-decoration: none;
     font-size: 0.875rem;
 
@@ -94,7 +94,7 @@ footer {
   }
 
   a {
-    color: #3f51b5;
+    color: #3e3f45;
     text-decoration: none;
     font-weight: 500;
 
@@ -170,7 +170,6 @@ footer {
   transition: all 0.3s ease;
 }
 
-/* Acessibilidade - Alto Contraste */
 body.high-contrast .login-container {
   background: black !important;
 }
@@ -227,7 +226,6 @@ body.high-contrast .back-button {
   margin-bottom: 1rem;
 }
 
-/* Campos de formulário com acessibilidade */
 mat-form-field {
   width: 100%;
 }
@@ -256,7 +254,6 @@ body.very-high-contrast .mat-form-field-label {
   color: yellow !important;
 }
 
-/* Botões com acessibilidade */
 button[mat-raised-button] {
   width: 100%;
   padding: 0.75rem;
@@ -278,7 +275,6 @@ body.very-high-contrast button[mat-raised-button] {
   font-weight: bold;
 }
 
-/* Estados de hover e focus melhorados */
 button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -289,7 +285,6 @@ body.reduce-animation button:hover {
   box-shadow: none;
 }
 
-/* Foco para navegação por teclado */
 button:focus,
 input:focus {
   outline: 3px solid #667eea !important;
@@ -308,7 +303,6 @@ body.very-high-contrast input:focus {
   outline-offset: 3px !important;
 }
 
-/* Snackbar acessível */
 .error-snackbar {
   background: #f44336 !important;
   color: white !important;
@@ -331,12 +325,10 @@ body.high-contrast .success-snackbar {
   border: 2px solid white !important;
 }
 
-/* Loading spinner */
 mat-spinner {
   margin: 0 auto;
 }
 
-/* Links e textos */
 .login-link {
   text-align: center;
   margin-top: 1.5rem;
@@ -364,7 +356,6 @@ body.very-high-contrast .link {
   color: white !important;
 }
 
-/* Responsividade com acessibilidade */
 @media (max-width: 480px) {
   .login-card {
     margin: 1rem;

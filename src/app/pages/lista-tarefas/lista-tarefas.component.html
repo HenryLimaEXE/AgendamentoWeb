@@ -1,7 +1,44 @@
 <div class="container-fluid p-0">
-  <!-- App Bar -->
   <mat-toolbar color="primary" class="mat-elevation-z6">
+    <div class="resource-monitor-left">
+      <div class="metric cpu">
+        <mat-icon>memory</mat-icon>
+        <div class="metric-info">
+          <span class="metric-label">CPU</span>
+          <span class="metric-value">{{ cpuUsage }}%</span>
+        </div>
+        <div class="mini-chart">
+          <canvas #cpuCanvas width="50" height="30"></canvas>
+        </div>
+      </div>
+
+      <div class="metric gpu" *ngIf="gpuSupported">
+        <mat-icon>developer_board</mat-icon>
+        <div class="metric-info">
+          <span class="metric-label">GPU</span>
+          <span class="metric-value">{{ gpuUsage }}%</span>
+        </div>
+        <div class="mini-chart">
+          <canvas #gpuCanvas width="50" height="30"></canvas>
+        </div>
+      </div>
+
+      <div class="metric ram">
+        <mat-icon>storage</mat-icon>
+        <div class="metric-info">
+          <span class="metric-label">RAM</span>
+          <span class="metric-value">{{ ramUsage }}%</span>
+        </div>
+        <div class="mini-chart">
+          <div class="simple-bar">
+            <div class="bar-fill" [style.width.%]="ramUsage"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <span class="app-title">Agendamento de Serviços</span>
+
     <span class="spacer"></span>
 
     <button mat-icon-button [matMenuTriggerFor]="userMenu">
@@ -24,15 +61,12 @@
     </mat-menu>
   </mat-toolbar>
 
-  <!-- Main Content -->
   <div class="main-content">
-    <!-- Loading State -->
     <div *ngIf="isLoading" class="loading-container">
       <mat-spinner></mat-spinner>
       <p>Carregando serviços...</p>
     </div>
 
-    <!-- Formulário de Adição -->
     <mat-card class="form-card mat-elevation-z4" *ngIf="!isLoading">
       <mat-card-header>
         <mat-card-title>Adicionar Novo Serviço</mat-card-title>
@@ -66,7 +100,6 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- Listas de Tarefas -->
     <div class="task-lists" *ngIf="!isLoading">
       <!-- Pendentes -->
       <mat-card class="task-list">
@@ -117,7 +150,6 @@
         </mat-card-content>
       </mat-card>
 
-      <!-- Fazendo -->
       <mat-card class="task-list">
         <mat-card-header>
           <mat-card-title>
@@ -166,7 +198,6 @@
         </mat-card-content>
       </mat-card>
 
-      <!-- Concluídas -->
       <mat-card class="task-list">
         <mat-card-header>
           <mat-card-title>
